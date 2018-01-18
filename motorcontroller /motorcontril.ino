@@ -1,6 +1,11 @@
 
-#define fbpwm  11
-#define fbenable 13 
+#define backpwm  9
+
+#define frontpwm  10
+
+#define backenable 7
+
+#define frontenable 6
 
 
 
@@ -18,7 +23,11 @@ void setup() {
   }
 
 
-  pinMode(13, OUTPUT);   // digital sensor is on digital pin 2
+  pinMode(backpwm, OUTPUT);
+  pinMode(frontpwm, OUTPUT);
+  pinMode(backenable, OUTPUT);
+  pinMode(frontenable, OUTPUT);
+
 
 }
 
@@ -43,20 +52,47 @@ void loop()
 
 
 
-      
+
       if (fb == 50) {
-        analogWrite(fbpwm,0);
-        
+        analogWrite(backpwm,0);
+
+
+
       }
       else if (fb < 50) {
-         analogWrite(fbpwm,130-fb);
-         digitalWrite(fbenable,HIGH);
+         analogWrite(backpwm,130-fb);
+         digitalWrite(backenable,HIGH);
+
       }
       else if (fb>50) {
-         analogWrite(fbpwm,30+fb);
-       digitalWrite(fbenable,LOW);
+         digitalWrite(backenable,LOW);
+         analogWrite(backpwm,40+fb);
+
+
       }
-   
+    //front
+
+      if (rl == 50) {
+        analogWrite(frontpwm,0);
+
+
+      }
+      else if (rl < 50) {
+        digitalWrite(frontenable,HIGH);
+        delay(5);
+         analogWrite(frontpwm,160);
+
+
+
+      }
+      else if (rl>50) {
+         digitalWrite(frontenable,LOW);
+         delay(5);
+         analogWrite(frontpwm,170);
+
+
+      }
+
 
 
     }
