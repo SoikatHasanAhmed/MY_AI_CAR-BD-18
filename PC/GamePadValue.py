@@ -33,10 +33,21 @@
 import pygame
 import serial
 import time
+import pyttsx3
+import threading
+from voice import *
 
+engine = pyttsx3.init()
+engine.setProperty('rate', 125)
+
+t = threading.Thread(target=voice)
+t.start()
+#talk
+talkfront_back = False
+talkright_left = False
 
 #init serial
-arduino =serial.Serial("/dev/ttyACM0",9600,timeout=5)
+arduino = serial.Serial("/dev/ttyACM0",9600,timeout=5)
 
 
 def move(fb, rl):
@@ -55,7 +66,9 @@ pygame.display.init()
 pygame.joystick.init()
 pygame.joystick.Joystick(0).init()
 print('init gamepad')
-
+engine.say('command initiated')
+engine.say('welcome back sir')
+engine.runAndWait()
 
 while True:
 
@@ -63,6 +76,7 @@ while True:
         bx = int((pygame.joystick.Joystick(0).get_axis(3))*50+50)
         ay = int((pygame.joystick.Joystick(0).get_axis(1))*50+50)
         print(str(ay)+'  '+str(bx))
+
         move(ay,bx)
         time.sleep(.1)
 

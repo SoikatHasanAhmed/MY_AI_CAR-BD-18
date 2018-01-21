@@ -31,7 +31,7 @@
 
 
 #define backpwm  9
-#define frontpwm  10
+#define frontpwm  11
 #define backenable 7
 #define frontenable 6
 
@@ -109,15 +109,15 @@ void loop()
       }
       else if (rl < 50) {
         digitalWrite(frontenable,HIGH);
-        delay(5);
-         analogWrite(frontpwm,130);
+
+        analogWrite(frontpwm,130);
 
 
 
       }
       else if (rl>50) {
          digitalWrite(frontenable,LOW);
-         delay(5);
+
          analogWrite(frontpwm,130);
 
 
