@@ -31,17 +31,27 @@
 
 
 #define backpwm  9
-#define frontpwm  11
+#define frontpwm  10
 #define backenable 7
 #define frontenable 6
+#define b_pluse 5
+#define b_dir 4
 
+//break
+
+long delay_Micros = 1800; // Set value
+long currentMicros = 0; long previousMicros = 0;
+int counter = 0;
 
 
 int userInput[3];
 int startbyte;
-int fb;
+int fb,bk;
 int rl;
 int i;
+
+
+
 
 void setup() {
   // start serial port at 9600 bps and wait for port to open:
@@ -55,6 +65,8 @@ void setup() {
   pinMode(frontpwm, OUTPUT);
   pinMode(backenable, OUTPUT);
   pinMode(frontenable, OUTPUT);
+  pinMode(b_pluse, OUTPUT);
+  pinMode(b_dir, OUTPUT);
 
 
 }
@@ -76,49 +88,51 @@ void loop()
       fb = userInput[0];
       // Second byte = which right left?
       rl = userInput[1];
+
       // Packet error checking and recovery
 
 
 
 
       if (fb == 50) {
-        analogWrite(backpwm,0);
+        analogWrite(backpwm, 0);
 
 
 
       }
       else if (fb < 50) {
-         analogWrite(backpwm,130-fb);
-         digitalWrite(backenable,HIGH);
+        analogWrite(backpwm, 130 - fb);
+        digitalWrite(backenable, HIGH);
 
       }
-      else if (fb>50) {
-         digitalWrite(backenable,LOW);
-         analogWrite(backpwm,40+fb);
+      else if (fb > 50) {
+       // digitalWrite(backenable, LOW);
+       // analogWrite(backpwm, 40 + fb);
+       Break();
 
 
       }
 
 
-    //front
+      //front
 
       if (rl == 50) {
-        analogWrite(frontpwm,0);
+        analogWrite(frontpwm, 0);
 
 
       }
       else if (rl < 50) {
-        digitalWrite(frontenable,HIGH);
+        digitalWrite(frontenable, HIGH);
 
-        analogWrite(frontpwm,130);
+        analogWrite(frontpwm, 130);
 
 
 
       }
-      else if (rl>50) {
-         digitalWrite(frontenable,LOW);
+      else if (rl > 50) {
+        digitalWrite(frontenable, LOW);
 
-         analogWrite(frontpwm,130);
+        analogWrite(frontpwm, 130);
 
 
       }
@@ -127,4 +141,42 @@ void loop()
 
     }
   }
+}
+
+
+
+void Break() {
+  digitalWrite(b_dir, LOW);
+
+  currentMicros = micros();
+
+  if (currentMicros - previousMicros >= delay_Micros)
+
+  {
+
+    previousMicros = currentMicros;
+
+
+
+    if (counter == 200)
+    {
+
+      digitalWrite(b_pluse, LOW);
+
+
+
+
+    }
+    else
+    {
+      digitalWrite(b_pluse, HIGH);
+
+      delayMicroseconds(500); //Set Value
+
+      digitalWrite(b_pluse, LOW);
+      counter++;
+    }
+
+  }
+
 }
