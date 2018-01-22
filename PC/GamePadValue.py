@@ -29,6 +29,7 @@
 #    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 #    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 #    OF THE POSSIBILITY OF SUCH DAMAGE.
+from builtins import print
 
 import pygame
 import serial
@@ -47,7 +48,7 @@ talkfront_back = False
 talkright_left = False
 
 #init serial
-arduino = serial.Serial("/dev/ttyACM0",9600,timeout=5)
+arduino = serial.Serial("/dev/ttyACM2",9600,timeout=5)
 
 
 def move(fb, rl):
@@ -55,6 +56,7 @@ def move(fb, rl):
         arduino.write(chr(100).encode())
         arduino.write(chr(fb).encode())
         arduino.write(chr(rl).encode())
+       # arduino.write(chr(bk).encode())
 
 
 
@@ -73,7 +75,7 @@ engine.runAndWait()
 while True:
 
         pygame.event.pump()
-        bx = int((pygame.joystick.Joystick(0).get_axis(3))*50+50)
+        bx = int((pygame.joystick.Joystick(0).get_axis(2))*50+50)
         ay = int((pygame.joystick.Joystick(0).get_axis(1))*50+50)
         print(str(ay)+'  '+str(bx))
 
