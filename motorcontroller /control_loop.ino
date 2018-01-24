@@ -30,12 +30,12 @@
 //    OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#define backpwm  9
-#define frontpwm  10
+#define backpwm  5
+#define frontpwm  6
 #define backenable 7
-#define frontenable 6
-#define b_pluse 5
-#define b_dir 4
+#define frontenable 4
+#define brk_c 3
+#define brk_d 2
 
 //break
 
@@ -46,9 +46,10 @@ int counter = 0;
 
 int userInput[3];
 int startbyte;
-int fb,bk;
-int rl;
-int i;
+int fb, brk_key, brk_release_key, center, rl, i;
+
+int isbreak = 0;
+int isbreak_release = 0;
 
 
 
@@ -65,8 +66,8 @@ void setup() {
   pinMode(frontpwm, OUTPUT);
   pinMode(backenable, OUTPUT);
   pinMode(frontenable, OUTPUT);
-  pinMode(b_pluse, OUTPUT);
-  pinMode(b_dir, OUTPUT);
+  pinMode(brk_c, OUTPUT);
+  pinMode(brk_d, OUTPUT);
 
 
 }
@@ -75,65 +76,91 @@ void loop()
 {
 
   // Wait for serial input (min 3 bytes in buffer)
-  if (Serial.available() > 2) {
+  if (Serial.available() > 5) {
     // Read the first byte
     startbyte = Serial.read();
     // If it's really the startbyte (100) ...
     if (startbyte == 100) {
-      // ... then get the next two bytes
-      for (i = 0; i < 2; i++) {
+      // ... then get the next  bytes
+      for (i = 0; i < 5; i++) {
         userInput[i] = Serial.read();
       }
-      // First byte = font back to move?
+      // First byte = font back to move
       fb = userInput[0];
-      // Second byte = which right left?
+      // Second byte = which right left
       rl = userInput[1];
 
-      // Packet error checking and recovery
+      brk_key =  userInput[2];
+      brk_release_key =  userInput[3];
+      center =  userInput[4];
+
+      if ( brk_key == 1)
+      {
+      //  if(isbreak_release == 0)
+
+      //  {
+        //   isbreak = 1;
+           brk();
+        //   isbreak_release = 1;
+
+        //  }
 
 
+      }
 
+      if ( brk_release_key == 1)
+      {
+       // if (isbreak == 1)
+      //  {
+          break_release();
+        //  isbreak ==0;
+       //   isbreak_release =0;
 
-      if (fb == 50) {
-        analogWrite(backpwm, 0);
+        //  }
 
 
 
       }
-      else if (fb < 50) {
-        analogWrite(backpwm, 130 - fb);
-        digitalWrite(backenable, HIGH);
+
+
+
+      if (fb == 50)
+      {
+
+        back_nutral() ;
 
       }
-      else if (fb > 50) {
-       // digitalWrite(backenable, LOW);
-       // analogWrite(backpwm, 40 + fb);
-       Break();
+      else if (fb < 50)
+      {
+        forward();
+      }
+      else if (fb > 50)
+      {
 
+        backward() ;
 
       }
 
 
       //front
 
-      if (rl == 50) {
-        analogWrite(frontpwm, 0);
+      if (rl == 50)
+      {
+        front_nutral();
 
 
       }
-      else if (rl < 50) {
-        digitalWrite(frontenable, HIGH);
+      else if (rl < 50)
+      {
 
-        analogWrite(frontpwm, 130);
-
+        left() ;
 
 
       }
-      else if (rl > 50) {
-        digitalWrite(frontenable, LOW);
+      else if (rl > 50)
+      {
 
-        analogWrite(frontpwm, 130);
-
+        right() ;
 
       }
 
@@ -145,38 +172,73 @@ void loop()
 
 
 
-void Break() {
-  digitalWrite(b_dir, LOW);
-
-  currentMicros = micros();
-
-  if (currentMicros - previousMicros >= delay_Micros)
-
-  {
-
-    previousMicros = currentMicros;
 
 
 
-    if (counter == 200)
-    {
-
-      digitalWrite(b_pluse, LOW);
+void forward()
+{
 
 
+  analogWrite(backpwm, 130 - fb);
+  digitalWrite(backenable, HIGH);
+
+}
+
+void back_nutral()
+{
+  analogWrite(backpwm, 0);
+
+}
 
 
-    }
-    else
-    {
-      digitalWrite(b_pluse, HIGH);
+void backward()
+{
 
-      delayMicroseconds(500); //Set Value
+  digitalWrite(backenable, LOW);
+  analogWrite(backpwm, 40 + fb);
 
-      digitalWrite(b_pluse, LOW);
-      counter++;
-    }
 
-  }
+}
+void front_nutral()
+{
+  analogWrite(frontpwm, 0);
+
+}
+
+void right() {
+
+  digitalWrite(frontenable, HIGH);
+  analogWrite(frontpwm, 130);
+
+
+}
+void left()
+{
+
+  digitalWrite(frontenable, LOW);
+  analogWrite(frontpwm, 130);
+
+
+}
+
+
+void brk() {
+  digitalWrite(brk_c, HIGH);
+  digitalWrite(brk_d, LOW);
+  delay(500);
+  digitalWrite(brk_c, LOW);
+  digitalWrite(brk_d, LOW);
+
+
+}
+
+void break_release() {
+
+  digitalWrite(brk_c, LOW);
+  digitalWrite(brk_d, HIGH);
+  delay(500);
+  digitalWrite(brk_c, LOW);
+  digitalWrite(brk_d, LOW);
+
 
 }
