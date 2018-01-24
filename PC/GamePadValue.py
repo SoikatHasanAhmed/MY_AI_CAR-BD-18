@@ -45,10 +45,11 @@ t = threading.Thread(target=voice)
 t.start()
 
 #init serial
-arduino = serial.Serial("/dev/ttyACM0",9600,timeout=5)
+arduino = serial.Serial("/dev/ttyACM1",9600,timeout=5)
 
 
 def send_to_arduino(fb, rl,brk_key,brk_release_key,center):
+
 
         arduino.write(chr(100).encode())
         arduino.write(chr(fb).encode())
