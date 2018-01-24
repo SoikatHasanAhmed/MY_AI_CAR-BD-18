@@ -38,24 +38,8 @@ import pyttsx3
 import threading
 from voice import *
 
-engine = pyttsx3.init()
-engine.setProperty('rate', 125)
-#thread for voice class
-t = threading.Thread(target=voice)
-t.start()
-
-#init serial
-arduino = serial.Serial("/dev/ttyACM0",9600,timeout=5)
 
 
-def send_to_arduino(fb, rl,brk_key,brk_release_key,center):
-
-        arduino.write(chr(100).encode())
-        arduino.write(chr(fb).encode())
-        arduino.write(chr(rl).encode())
-        arduino.write(chr(brk_key).encode())
-        arduino.write(chr(brk_release_key).encode())
-        arduino.write(chr(center).encode())
 
 
 time.sleep(1)
@@ -65,10 +49,7 @@ print('init serial')
 pygame.display.init()
 pygame.joystick.init()
 pygame.joystick.Joystick(0).init()
-print('init gamepad')
-engine.say('command initiated')
-engine.say('welcome back sir')
-engine.runAndWait()
+
 
 while True:
 
@@ -77,21 +58,3 @@ while True:
         ay = int((pygame.joystick.Joystick(0).get_axis(1))*50+50)
 
         print('control  :'+str(ay) + '  ' + str(bx))
-        # button 5 for break (front right up)
-        brk = int(pygame.joystick.Joystick(0).get_button(5))
-        print('break  :'+ str(brk))
-        # button 7 for release (front right down)
-        brk_release =int( pygame.joystick.Joystick(0).get_button(7))
-        print('break  release "'+str(brk_release))
-        # button 1 for VOICE KEY (BUTTON 2 )
-        voice_key =int( pygame.joystick.Joystick(0).get_button(1))
-        print('voice_key : '+str(voice_key))
-        # button 0 for steer center KEY (BUTTON 1 )
-        steer_center = int(pygame.joystick.Joystick(0).get_button(0))
-        print('steer center : ' + str(steer_center))
-
-        send_to_arduino(ay,bx,brk,brk_release,steer_center)
-        time.sleep(.1)
-
-
-

@@ -88,8 +88,9 @@ def voice():
         while True:
 
                 pygame.event.pump()
-                bx = int((pygame.joystick.Joystick(0).get_axis(3))*50+50)
+                bx = int((pygame.joystick.Joystick(0).get_axis(2))*50+50)
                 ay = int((pygame.joystick.Joystick(0).get_axis(1))*50+50)
+                brk = int(pygame.joystick.Joystick(0).get_button(5))
 
                 if ay == 50:
                         talkfront_back = True
@@ -113,4 +114,8 @@ def voice():
                         engine.say('turning right')
                         engine.runAndWait()
 
+                if brk == 1:
+
+                        engine.say('breaking')
+                        engine.runAndWait()
 

@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="PC.GamePadValue.voice" />
+          <option value="PC.test.voice" />
         </list>
       </option>
     </inspection_tool>
